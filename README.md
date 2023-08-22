@@ -1,4 +1,10 @@
 # BaCoN-II
+This ais the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using smooth curves that approximate the error in the theoretical modelling on small scales. The curves are produced by an adapted version of the [smurves](https://github.com/moews/smurves) package. start all at k = 0.03 h/Mpc and have different shapes produced with an . 323 curves files
+
+![image](https://github.com/cosmicLinux/BaCoN-II/assets/142009018/4e37020f-a066-4d64-a88d-7a96dac51698)
+
+
+The Cosmic Variance is still modelled as a Gaussian noise on large sclaes. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
 ## training
 
