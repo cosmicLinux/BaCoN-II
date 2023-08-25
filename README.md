@@ -1,5 +1,6 @@
 # BaCoN-II
 This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using smooth curves that approximate the error in the theoretical modelling on small scales. 
+
 **The training of a model can now take up to 5 days.**
 
 The curves are produced by an adapted version of the [smurves](https://github.com/moews/smurves) package. They all start at $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes produced by smurves. They are scaled according to a Gaussian distribution centred on 0. Tha standard deviation of the amplitude can be set with the ```sigma_curves```-parameter in the ```train-curves-parameter.py``` file. We recommend $\sigma = 0.05$ for EE2 data.
