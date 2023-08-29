@@ -44,10 +44,8 @@ python train-curves-parameter.py
 
 
 ## testing
-- ```--log_path``` Fill in the path for the log-file of the model to be tested. 
-- ```--cm_name_custom``` Add an (optional) addition to the name of the cm-file. (confusion matrix)
-- ```--curves_folder```Decide on whether to add a systematic error to the test spectra. Adapt the cm_name accordingly.
-- ```--add_sys``` If using a systematic error then the folder for curves files has to be added.
+
+To test a trained model with a test data set and produce a confusion matrix for the classification run
 
 <pre>
 python3 test.py --log_path='models/<i>&lt;model_name&gt;</i>/<i>&lt;model_name&gt;</i>_log.txt' --TEST_DIR='<i>&lt;path/to/test-data&gt;</i>' 
@@ -56,4 +54,9 @@ python3 test.py --log_path='models/<i>&lt;model_name&gt;</i>/<i>&lt;model_name&g
   --add_sys='False'
 </pre>
 
+Please adapt the following options
 
+- ```--log_path``` Fill in the path for the log-file of the model to be tested. 
+- ```--cm_name_custom``` Add an (optional) addition to the name of the cm-file. (confusion matrix)
+- ```--curves_folder```Decide on whether to add a systematic error to the test spectra. Adapt the cm_name accordingly.
+- ```--add_sys``` Choose ```True``` or ```False``` to include the systematic error or leave it out. This overwrites the choice in the training of the model. For ```True``` the path to the folder with curves files (see above) has to be added.
