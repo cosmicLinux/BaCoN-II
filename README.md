@@ -14,7 +14,9 @@ In total there are 323 curves files with 10,000 curves per file. (The first line
 
 The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
-** curves 10% 'max' error, number of curve files = 1000 (set in random number choice), name filter file is '1.txt' **
+**curves 10% 'max' error, number of curve files = 1000 (set in random number choice), name filter file is '1.txt'**
+
+
 
 ## training
 
