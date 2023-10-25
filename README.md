@@ -1,5 +1,5 @@
 # BaCoN-II
-This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using smooth curves that approximate the error in the theoretical modelling on small scales. 
+This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using smooth curves that approximate the error in the theoretical modelling on smaller scales. 
 
 **The training of a model can now take up to 5 days.**
 
@@ -54,7 +54,8 @@ To test a trained model with a test data set and produce a confusion matrix for 
 <pre>
 python3 test.py --log_path='models/<i>&lt;model_name&gt;</i>/<i>&lt;model_name&gt;</i>_log.txt' --TEST_DIR='<i>&lt;path/to/test-data&gt;</i>' 
   --cm_name_custom='<i>&lt;cm_name&gt;</i>-noSys'
-  --curves_folder='curve_files_sys/curve_files_train1k_2500batchsize_sysFactor0o04_start0o03_dirChange0' 
+  --curves_folder='curve_files_sys/filters_earliest_onset' 
+  --norm_data_name='/planck_ee2.txt' 
   --add_sys='False'
 </pre>
 
