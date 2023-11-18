@@ -3,21 +3,28 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 
 **The training of a model can now take up to 4 days.**
 
-The curves are produced by an adapted version of the [smurves](https://github.com/moews/smurves) package. They all start at $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes produced by smurves. They are scaled according to a Gaussian distribution centred on 0. Tha standard deviation of the amplitude can be set with the ```sigma_curves```-parameter in the ```train-curves-parameter.py``` file. We recommend $\sigma = 0.05$ for EE2 data.
-Some example curves with $\sigma = 0.04$ are shown below.
+## new noise model
 
-<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/4e37020f-a066-4d64-a88d-7a96dac51698" 
+We have produced 1000 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/```. (With names ```1.txt``` to ```1000.txt```) The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
+Some example curves with $\sigma_\mathrm{curves} = 0.10$ are shown below.
+
+<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/7ecece0e-876d-4e15-baf7-2128f5e7db65"
      width="300" />
 
+A plot of 10 different realisations of theory error curves (scaled to 5%) superimposed onto some LCDM example spectra (including cosmic variance) is shown below.
+     
+<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/1c945ac0-67dc-45e7-8a4a-d28e417e3719"
+     width="350" />
 
-In total there are 323 curves files with 10,000 curves per file. (The first line of every curve file contains the k-values) The size is chosen so that one curve file can be used for one batch with the size of 2500 and four z-bins. The curve files (with the names ```curve_file_batch#.txt```) should be placed in the folder ```data/curve_files_sys/curve_files_train1k_2500batchsize_sysFactor0o04_start0o03_dirChange0```, alternatively the ```curves_folder``` in the file ```train-curves-parameter.py``` should be adapted.
+The amplitude of the curves can be rescaled with a uniform distribution to obtain some smaller errors as well. This option can be selected with the training parameter ```rescale_curves = 'uniform'```.
+
+<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/a89b264c-d848-4ac6-805d-e5ad050c6c8c"
+     width="300" />
 
 The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
-**curves 10% 'max' error, number of curve files = 1000 (set in random number choice), name filter file is '1.txt'**
-
 ## data structure
-Get the spectra from [Ben's Google drive folder](https://drive.google.com/drive/folders/1MCYvhlsIsBoSNJEBGuofieieQ_VfPPJk). Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folder. The resulting data structure should look like this:
+Get the spectra from [Ben's Google drive folder](https://drive.google.com/drive/folders/1MCYvhlsIsBoSNJEBGuofieieQ_VfPPJk) and put them into the data folder. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
 
 ```bash
 data/train_data/
@@ -56,10 +63,6 @@ The noise parameters are:
           * ```curves_folder``` path to the folder with files containing systematic curves. Number of curves per file has to be at least number_z_bins * number_files_per_batch.
           * ```sigma_curves``` standard deviation of the normal distribution for curve amplitudes, default is $\sigma_\mathrm{curves}=4$ %.
 
-Discontinued parameters of other modelling techniques for the systematic error are:
-
-          *
-          *
 
 The name of the model is automatically produced from the training parameters in ```train-curves-parameter.py``` as 
 <pre> curves_<i>&lt;train_name&gt;</i>_<i>&lt;test_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
@@ -67,7 +70,7 @@ The name of the model is automatically produced from the training parameters in 
 
 To train the model with a theory error of 5 % execute
 ```bash
-python train-curves-parameter.py --sigma_curves='0.05'
+python3 train-curves-parameter.py --sigma_curves='0.05'
 ```
 
 
