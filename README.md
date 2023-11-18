@@ -3,7 +3,7 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 
 **The training of a model can now take up to 4 days.**
 
-## new noise model
+## New noise model
 
 We have produced 1000 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/```. (With names ```1.txt``` to ```1000.txt```) The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
 Some example curves with $\sigma_\mathrm{curves} = 0.10$ are shown below.
@@ -23,7 +23,7 @@ The amplitude of the curves can be rescaled with a uniform distribution to obtai
 
 The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
-## data structure
+## Data structure
 Get the spectra from [Ben's Google drive folder](https://drive.google.com/drive/folders/1MCYvhlsIsBoSNJEBGuofieieQ_VfPPJk) and put them into the data folder. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
 
 ```bash
@@ -49,9 +49,11 @@ data/train_data/
 
 Adapt the name of the training data folder in the ```train-parameters.py``` file accordingly (using the ```DIR``` parameter). The name of the test data folder can be set when the testing is started (see below).
 
-## training
+## Training
 
 Change the ```train-parameters.py``` file to set the training parameters that are then passed on to ```train.py```. 
+
+Number of classes: adapt batch size and c1 names (in the subprocess call at the end of the train-parameters.py file).
 
 The noise parameters are:
 
