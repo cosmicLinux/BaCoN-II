@@ -1,7 +1,7 @@
 # BaCoN-II
 This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using a variety of smooth curves that approximate the error in the theoretical modelling on smaller scales. 
 
-**The training of a model can now take up to 4 days.**
+**The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
 ## New noise model
 
@@ -52,28 +52,39 @@ Adapt the name of the training data folder in the ```train-parameters.py``` file
 ## Training
 
 Change the ```train-parameters.py``` file to set the training parameters that are then passed on to ```train.py```. 
+To train the model with a theory error of 5 % execute
+```bash
+python3 train-curves-parameter.py --sigma_curves='0.05'
+```
 
-Number of classes: adapt batch size and c1 names (in the subprocess call at the end of the train-parameters.py file).
+All the parameters are described in the file but we will explain the most important ones here:
+
+* ```DIR```: path to the training data,e.g. ```'data/train_data'```, use ```train_fname``` to set the name of the training data in the model name
+* ```norm_data_name```: path to the file of the normalisation spectrum, e.g. ```'/planck_ee2.txt'```, use ```planck_fname``` to set the name of the normalisation in the model name
+* ```k_max```: maximal wavenumber of spectrum used
+* ```sample_pace```: only sample every nth k-bin, we recommend n = 4 for the supplied spectra
+* ```save_processed_spectra```: Set to ```True``` if the first batch of normalised and noisy spectra should be written to a file to plot them later. Only recommended for a special training run with ```n_epochs``` = 1.
+* ```batch_size```: how many spectra per batch. **Has to be adapted to the number of classes.** Must be a multiple of (number of classes) * (noise realisations), e.g. 4 classes, 10 noisy samples -> must be multiple of 40, for example 8000 for 20,000 spectra per class
+* ```fname_extra```: appended to the automatically generated model name, to quickly find model in folder
 
 The noise parameters are:
 
 * ```add_noise```: if ```True```, then noise gets added according to the following parameters:
      * ```n_noisy_samples```: number of noise samples added to every training (and testing) spectrum, we suggest 10.
      * ```add_cosvar```: if ```True```, adds Gaussian noise on large scales, depends on survey volume, here adapted for the Euclid telescope.
-     * ```add_shot```: if ```True```, adds Gaussian noise to produce the shot noise of a Euclid-like Galaxy survey. Default is ```False```.
-     * ```add_sys```: if ```True```, smooth curves are added to account for the theoretical error, their amplitude is drawn from a Gaussian distribution $\mathcal{N}(0,\sigma_\mathrm{curves})$.
-          * ```curves_folder``` path to the folder with files containing systematic curves. Number of curves per file has to be at least number_z_bins * number_files_per_batch.
-          * ```sigma_curves``` standard deviation of the normal distribution for curve amplitudes, default is $\sigma_\mathrm{curves}=4$ %.
+     * ```add_shot```: if ```True```, adds Gaussian noise to produce the shot noise of a Euclid-like Galaxy survey. We recommend ```False``` for the matter power spectrum.
+     * ```add_sys```: if ```True```, theory error curves are added to account for the theoretical error in the modelling
+          * ```curves_folder``` path to the folder with files containing the theory error curves
+          * ```sigma_curves``` maximal amplitude of the plateau of the theory error curves on small scales (as added to the normalised power spectrum). It can be set in the ```train-parameters.py``` file but it can also be passed on as a parameter in the command line. (See above)
+          * ```rescale_curves``` rescale the amplitude of theory error curves. Distribution can be ```uniform```(recommended), ```gaussian``` or ```None```.
 
+When changing the total number of classes (equivalent to the number of folders in the training data) then the batch size has to be adapted accordingly. The new class names have to be added to the c1 parameter that is set in the subprocess call at the end of the train-parameters.py file.
 
-The name of the model is automatically produced from the training parameters in ```train-curves-parameter.py``` as 
+The name of the model is automatically generated from the training parameters in ```train-parameters.py``` as 
 <pre> curves_<i>&lt;train_name&gt;</i>_<i>&lt;test_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
 </pre>
 
-To train the model with a theory error of 5 % execute
-```bash
-python3 train-curves-parameter.py --sigma_curves='0.05'
-```
+
 
 
 ## testing
