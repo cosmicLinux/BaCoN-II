@@ -144,7 +144,7 @@ def compute_loss(generator, model, bayesian=False):
   
 
 
-def print_cm(cm, names, out_path, cm_name_custom,tot_acc, FLAGS):
+def print_cm(cm, names, out_path, cm_name_custom,tot_acc,tot_acc_no_uncl, FLAGS):
     import pandas as pd
     import matplotlib.pyplot as plt
     plt.rcParams["font.family"] = 'serif'
@@ -153,14 +153,15 @@ def print_cm(cm, names, out_path, cm_name_custom,tot_acc, FLAGS):
     
     matrix_proportions = np.zeros((len(names),len(names)))
     for i in range(0,len(names)):
+        np.seterr(invalid='ignore') # Suppress/hide the warning when divide by zero
         matrix_proportions[i,:] = cm[i,:]/float(cm[i,:].sum())
     #print(matrix_proportions)    
     
     confusion_df = pd.DataFrame(matrix_proportions, 
                             index=names,columns=names)
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(8,8))
     sns.heatmap(confusion_df, annot=True,
-            annot_kws={"size": 16}, cmap='gist_gray_r',
+            annot_kws={"size": 18}, cmap='gist_gray_r',
             cbar=False, square=True, fmt='.2f');
                 
     #accuracy = np.trace(cm) / np.sum(cm).astype('float')
@@ -169,8 +170,7 @@ def print_cm(cm, names, out_path, cm_name_custom,tot_acc, FLAGS):
     plt.ylabel(r'True categories',fontsize=14);
     plt.xlabel(r'Predicted categories',fontsize=14);
     plt.tick_params(labelsize=16);
-    plt.title('-- Test accuracy with N.C.: %s %%' %( tot_acc.numpy()),fontsize=16)
-    
+    plt.title("Test accuracy w/ N.C.: {:.3f}".format(tot_acc.numpy()),fontsize=20)
     
     #plt.show()
     cm_path = out_path+'/cm_'+cm_name_custom
@@ -204,13 +204,15 @@ def evaluate_accuracy(model, test_generator, out_path, cm_name_custom, names=Non
         acc_total += accuracy
         y_true_tot.append(y_true)
         y_pred_tot.append(y_pred)
+
     tot_acc = acc_total/test_generator.n_batches
     print('-- Total accuracy: %s %%' %( tot_acc.numpy()))  
+    tot_acc_no_uncl = 0
     
     #### CONFUSION MATRIX
     from sklearn.metrics import confusion_matrix
     cm = confusion_matrix(tf.concat(y_true_tot,axis=0),tf.concat(y_pred_tot,axis=0))
-    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc,FLAGS)
+    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc,tot_acc_no_uncl,FLAGS)
     
     
     return tot_acc
@@ -293,7 +295,7 @@ def evaluate_accuracy_bayes(model, test_generator, out_path, cm_name_custom, num
         print('Adding Not classified label')
         names = names+['N. C.']
         
-    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc,FLAGS)
+    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc, tot_acc_no_uncl,FLAGS)
     
     
     return tot_acc
@@ -306,11 +308,11 @@ def evaluate_accuracy_bayes(model, test_generator, out_path, cm_name_custom, num
 def main():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--bayesian", default=True, type=str2bool, required=False)
+    parser.add_argument("--bayesian", default=None, type=str2bool, required=False)
     parser.add_argument("--log_path", default='', type=str, required=True)
-    parser.add_argument("--TEST_DIR", default='data/test_data/', type=str, required=False)
-    parser.add_argument("--models_dir", default='models/', type=str, required=False)
-    parser.add_argument("--curves_folder", default='curve_files_sys/curve_files_train1k_sysFactor0o04_start0o03_dirChange0', type=str, required=False)
+    parser.add_argument("--TEST_DIR", default=None, type=str, required=False)
+    parser.add_argument("--models_dir", default=None, type=str, required=False)
+    parser.add_argument("--curves_folder", default=None, type=str, required=False)
     
     parser.add_argument("--n_monte_carlo_samples", default=100, type=int, required=False)
     parser.add_argument("--th_prob", default=0.5, type=float, required=False)
@@ -326,11 +328,14 @@ def main():
     parser.add_argument("--sys_scaled", default=None, type=str2bool, required=False)
     parser.add_argument("--sys_factor", default=None, type=float, required=False) 
     parser.add_argument("--sigma_curves", default=None, type=float, required=False)
+    parser.add_argument("--sigma_curves_default", default=None, type=float, required=False)
+    parser.add_argument("--save_processed_spectra", default=False, type=str2bool, required=False)   
+    parser.add_argument("--rescale_curves", default=None, type=str, required=False)
     
     #parser.add_argument('--z_bins', nargs='+', default=[0,1,2,3], required=False)
     parser.add_argument("--save_indexes", default=False, type=str2bool, required=False)
     parser.add_argument("--cm_name_custom", default='', type=str, required=False)
-    parser.add_argument("--norm_data_name", default='/planck_hmcode2020.txt', type=str, required=False)
+    parser.add_argument("--norm_data_name", default=None, type=str, required=False)
     #parser.add_argument("--sample_pace", default=4, type=int, required=False)
 
 
@@ -340,6 +345,8 @@ def main():
     print('Reading log from %s ' %args.log_path)
     n_flag_ow=False
     FLAGS = get_flags(args.log_path)
+
+    print('TEST_NORM_FILE: FLAGS.norm_data_name from log_path ', FLAGS.norm_data_name)
 
     # new to get user name for confuion matrix
     cm_name_custom = args.cm_name_custom
@@ -386,8 +393,15 @@ def main():
     if args.sigma_curves is not None:
         n_flag_ow=True
         FLAGS.sigma_curves = args.sigma_curves
+    if args.sigma_curves_default is not None:
+        n_flag_ow=True
+        FLAGS.sigma_curves_default = args.sigma_curves_default
+    if args.rescale_curves is not None:
+        FLAGS.rescale_curves = args.rescale_curves
+        
     
-    
+    print('TEST_NORM_FILE: FLAGS.norm_data_name after args written to FLAGS', FLAGS.norm_data_name)
+
     
     out_path = os.path.join(FLAGS.models_dir,FLAGS.fname)
     print('-------------------- out_path with FLAGS_fname', out_path)

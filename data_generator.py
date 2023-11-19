@@ -8,6 +8,7 @@ Created on Wed Jun 17 13:07:43 2020
 """
 import os
 import numpy as np
+import random
 import tensorflow.compat.v2 as tf
 tf.enable_v2_behavior()
 
@@ -53,24 +54,28 @@ def generate_noise(k, P,
 
 class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variable to 'params' further down
     def __init__(self, list_IDs, labels, labels_dict, batch_size=32, 
-                 data_root = 'data/', dim=(500, 4), n_channels=1,
-                 shuffle=True, normalization='stdcosmo',
-                 save_indexes=False, models_dir = 'models/', idx_file_name = '_',
-                 norm_data_name='/planck_hmcode2020.txt',
-                 #fname_user='my_model',
-                 curves_folder = 'curve_files_sys/curve_files_train1k_sysFactor0o04_start0o03_dirChange0',
-                 sample_pace = 4, pad=False, 
-                 Verbose=False, Verbose_2=False,
-                 k_max=2.5, i_max = None,
-                  add_noise=True, n_noisy_samples = 10, 
-                  add_shot=True, add_sys=True, add_cosvar=True, sigma_sys=5,
-                  sys_scaled=False, sys_factor=0.03, sys_max=False,
-                  sigma_curves = 0.04,
-                  fine_tune = False, 
-                  c_0=None, c_1=None, group_lab_dict=None, 
-                  z_bins=[0, 1, 2, 3], swap_axes=False,
-                  dataset_balanced=False, test_mode=False, one_vs_all=False,
-                 ):
+                data_root = 'data/', dim=(500, 4), n_channels=1,
+                shuffle=True, normalization='stdcosmo',
+                save_indexes=False, models_dir = 'models/', idx_file_name = '_',
+                norm_data_name='/planck_hmcode2020.txt',
+                fname = 'my_model',
+                #fname_user='my_model',
+                curves_folder = 'curve_files_sys/curve_files_train1k_sysFactor0o04_start0o03_dirChange0',
+                sample_pace = 4, pad=False, 
+                Verbose=False, Verbose_2=False,
+                k_max=2.5, i_max = None,
+                add_noise=True, n_noisy_samples = 10, 
+                add_shot=True, add_sys=True, add_cosvar=True, sigma_sys=5,
+                rescale_curves = None, 
+                sys_scaled=False, sys_factor=0.03, sys_max=False,
+                sigma_curves = 0.04,
+                sigma_curves_default = 0.10,
+                save_processed_spectra = False,
+                fine_tune = False, 
+                c_0=None, c_1=None, group_lab_dict=None, 
+                z_bins=[0, 1, 2, 3], swap_axes=False,
+                dataset_balanced=False, test_mode=False, one_vs_all=False,
+                ):
       
         print('Data Generator Initialization')
         
@@ -87,9 +92,13 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
         self.fine_tune=fine_tune
         self.c_0=c_0
         self.c_1=c_1
+        self.fname = fname # name model
         #self.fname_user=fname_user
         self.curves_folder=curves_folder 
         self.sigma_curves = sigma_curves
+        self.sigma_curves_default = sigma_curves_default
+        self.save_processed_spectra = save_processed_spectra
+        self.rescale_curves = rescale_curves
 
         self.swap_axes = swap_axes 
         
@@ -184,6 +193,7 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
         
         print('N. classes: %s' %self.n_classes) 
         print('N. n_classes in output: %s' %self.n_classes_out) #number of labels to predict
+        print('LABELS:', self.labels)
             
         self.shuffle = shuffle
         self.on_epoch_end()
@@ -359,20 +369,6 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
         #print('len(fname_list), batch_size, n_noisy_samples: %s, %s, %s' %(len(fname_list), self.batch_size, self.n_noisy_samples))
         assert len(fname_list)==self.batch_size//(self.n_noisy_samples)
 
-        # load file with sys-error curves for this batch
-        if self.add_sys:
-            #print('batch index in data_gen {}'.format(self.batch_idx))
-            curve_file = os.path.join(self.curves_folder, 'curve_file_batch{}.txt'.format(self.batch_idx))
-            curves_loaded = np.loadtxt(curve_file)
-            # shuffle curves in curve_array so that they are not always added to same spectrum
-            curves_loaded_shuffled = np.copy(curves_loaded[1:])
-            np.random.shuffle(curves_loaded_shuffled)
-            #print('loaded curves from curve_file ', curve_file)
-
-            if self.sample_pace!=1:
-              curves_loaded_shuffled = curves_loaded_shuffled[:,0::self.sample_pace]
-            curves_loaded_shuffled = curves_loaded_shuffled[:,:self.i_max]
-            #print('curves_loaded_shuffled.shape ',curves_loaded_shuffled.shape)
 
         for f_ind in range(len(fname_list)):            
             # Pick corresponding file from each folder 
@@ -382,16 +378,7 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
               #try:
               loaded_all = np.loadtxt(fname)
               P_original, k = loaded_all[:, 1:], loaded_all[:, 0]
-              if self.add_sys:
-                #for i_idx in range(curves_loaded.shape[0]):
-                #  if curves_loaded[i_idx][0] != 0.0:
-                #    print(i_idx, curves_loaded[i_idx][0])
-                k_curves = curves_loaded[0]
-                if (k[0] != k_curves[0]):
-                #if (k.all() != k_curves.all()):
-                  print('ERROR: k-values in spectrum and curve file not identical')
-                  #print('k',k)
-                  #print('k_curves',k_curves)
+
 
               if self.sample_pace!=1:
                 P_original = P_original[0::self.sample_pace, :]
@@ -418,17 +405,40 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
                     P_noisy = P_noisy + noise_cosVar
 
                   if self.add_sys:
-                    sigma_curves_files = 0.04
-                    noise_sys = self.norm_data[:,self.z_bins] # initalise in right array shape
-                    for i_z in self.z_bins:
-                      # add curves, different one for every z
-                      noise_sys[:,i_z] = self.sigma_curves/sigma_curves_files * noise_sys[:,i_z] * curves_loaded_shuffled[self.z_bins.shape[0]*f_ind*self.n_noisy_samples+i_noise+i_z] 
+                    curve_random_nr = random.randint(1,1000)
+                    curve_file = os.path.join(self.curves_folder, '{}.txt'.format(curve_random_nr))
+                    curves_loaded = np.loadtxt(curve_file)
+                    noise_sys, k_sys = curves_loaded[:, 1:], curves_loaded[:, 0]
+
+
+                    if self.sample_pace!=1:
+                        noise_sys = noise_sys[0::self.sample_pace, :]
+                        k_sys = k_sys[0::self.sample_pace]
+                    noise_sys, k_sys = noise_sys[:self.i_max], k_sys[:self.i_max]
+                    if (k.all() != k_sys.all()):
+                        print('ERROR: k-values in spectrum and theory-error curve file not identical')
+
+                    # rescale noise_sys curves according to error (10% default from production curves), 
+                    # rescale by Gaussian with sigma = 1
+                    # multiply with normalisation spectrum
+                    noise_sys = (noise_sys-1) * self.sigma_curves/self.sigma_curves_default  * self.norm_data[:,self.z_bins]
+
+                    if self.rescale_curves == 'uniform':
+                        noise_sys = noise_sys * np.random.uniform(0,1)
+                    if self.rescale_curves == 'gaussian':
+                        noise_sys = noise_sys * np.random.normal(loc=0, scale = 1)
+
                     P_noisy = P_noisy + noise_sys
+
 
                   if self.add_shot:
                     noise_shot = np.random.normal(loc=0, scale=generate_noise(k,self.norm_data[: , self.z_bins],sys_scaled=self.sys_scaled,sys_factor=self.sys_factor,sys_max=self.sys_max, add_cosvar=False, add_sys=False, add_shot=True,sigma_sys=self.sigma_sys))
                     P_noisy = P_noisy + noise_shot
+
+
                   expanded = np.expand_dims(P_noisy, axis=2)
+
+
                 else:
                   if self.Verbose:
                     print('No noise')
@@ -477,7 +487,6 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
                 y[i_ind] = encoding
                 i_ind += 1
         # finished all files in this batch
-        
 
         if self.normalization=='batch':
           mu_batch = np.mean(X, axis=0)
@@ -499,6 +508,24 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
                     print('axes not swapped')
                     print('Dimension of NORM data: %s' %str(self.norm_data[None, :,:,None].shape))
         
+        # save the noisy spectra as a file in the model folder, only for first batch
+        if self.save_processed_spectra:
+            if self.batch_idx==0:
+                name_spectra_folder = os.path.join(self.models_dir,self.fname,'processed_spectra') 
+                if not os.path.exists(name_spectra_folder):
+                    print('Creating directory %s' %  name_spectra_folder)
+                    os.makedirs(name_spectra_folder)
+                # new matrix for spectra, first column is class_idx, first row is k-values
+                X_save = np.empty((self.batch_size+1, len(k)+1))
+                X_save[1:,0] = y  
+                X_save[0,1:] = k 
+                for i_z in self.z_bins:
+                    X_save[1:,1:] = X[:,:,0,i_z]
+                    spectra_file = os.path.join(name_spectra_folder, 'processed_spectra_zbin{}.txt'.format(i_z))
+                    if not os.path.exists(spectra_file):
+                        print('Saving processed (noisy and normalised) spectra in %s' % spectra_file)
+                        with open(spectra_file, "a+") as myCurvefile:
+                            np.savetxt(myCurvefile, X_save, delimiter=' ', newline='\r\n')
    
         # shuffle to avoid having always three examples with different label in a row
         if self.shuffle:
@@ -684,10 +711,14 @@ def create_generators(FLAGS):
           'models_dir':FLAGS.models_dir,
           'norm_data_name':FLAGS.norm_data_name,
           'fine_tune':FLAGS.fine_tune ,
+          'fname':FLAGS.fname,
           #'c_0':FLAGS.c_0 ,
           #'c_1':FLAGS.c_1 ,    
           'curves_folder':FLAGS.curves_folder,  
           'sigma_curves':FLAGS.sigma_curves,
+          'sigma_curves_default':FLAGS.sigma_curves_default,
+          'save_processed_spectra':FLAGS.save_processed_spectra,
+          'rescale_curves':FLAGS.rescale_curves,
           }
     
     if FLAGS.fine_tune  or FLAGS.one_vs_all:
@@ -798,10 +829,14 @@ def create_test_generator(FLAGS):
           'normalization':FLAGS.normalization,
           'norm_data_name':FLAGS.norm_data_name,
           'fine_tune':FLAGS.fine_tune ,
+          'fname':FLAGS.fname,
           #'c_0':FLAGS.c_0 ,
           #'c_1':FLAGS.c_1 ,  
           'curves_folder':FLAGS.curves_folder,
           'sigma_curves':FLAGS.sigma_curves,
+          'sigma_curves_default':FLAGS.sigma_curves_default,
+          'save_processed_spectra':FLAGS.save_processed_spectra,
+          'rescale_curves':FLAGS.rescale_curves,
           }
     
     if FLAGS.fine_tune or FLAGS.one_vs_all:
@@ -824,6 +859,6 @@ def create_test_generator(FLAGS):
                                idx_file_name = FLAGS.fname, 
                                **params_test)
 
-    
+
     
     return test_generator

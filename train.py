@@ -4,7 +4,7 @@
 Created on Wed Jun 17 13:21:14 2020
 
 @author: Michi
-@editor: Linus, Feb 2023
+@editor: Linus, Feb 2023, add norm_data_name
 """
 import argparse
 import os
@@ -258,7 +258,9 @@ def main():
     parser.add_argument("--models_dir", default='models/', type=str, required=False)
     parser.add_argument("--save_ckpt", default=True, type=str2bool, required=False)
     parser.add_argument("--out_path_overwrite", default=False, type=str2bool, required=False)
-    parser.add_argument("--curves_folder", default='curve_files_sys/curve_files_train1k_sysFactor0o04_start0o03_dirChange0', type=str, required=False)
+    parser.add_argument("--curves_folder", default=None, type=str, required=False)
+    parser.add_argument("--save_processed_spectra", default=False, type=str2bool, required=False)    
+
     
     # INPUT DATA DIMENSION
     parser.add_argument("--im_depth", default=500, type=int, required=False)
@@ -270,7 +272,7 @@ def main():
     
     # PARAMETERS TO GENERATE DATA
     parser.add_argument("--sort_labels", default=True, type=str2bool, required=False)
-    parser.add_argument("--norm_data_name", default='/planck_hmcode2020.txt', type=str, required=False)
+    parser.add_argument("--norm_data_name", default=None, type=str, required=False)
     parser.add_argument("--normalization", default='stdcosmo', type=str, required=False)
     parser.add_argument("--sample_pace", default=4, type=int, required=False)
     
@@ -282,11 +284,13 @@ def main():
     parser.add_argument("--add_shot", default=True, type=str2bool, required=False)
     parser.add_argument("--add_sys", default=True, type=str2bool, required=False)
     parser.add_argument("--add_cosvar", default=True, type=str2bool, required=False)
-    parser.add_argument("--sigma_sys", default=5., type=float, required=False)
+    parser.add_argument("--sigma_sys", default=None, type=float, required=False)
     parser.add_argument("--sys_scaled", default=None, type=str2bool, required=False)
     parser.add_argument("--sys_factor", default=None, type=float, required=False)
     parser.add_argument("--sys_max", default=None, type=str2bool, required=False)  
     parser.add_argument("--sigma_curves", default=None, type=float, required=False) 
+    parser.add_argument("--sigma_curves_default", default=None, type=float, required=False)
+    parser.add_argument("--rescale_curves", default=None, type=str, required=False)
     
     parser.add_argument('--z_bins', nargs='+', default=[0,1,2,3], required=False)
 
@@ -633,5 +637,4 @@ def main():
 if __name__=='__main__':
     
     main()
-    
     
