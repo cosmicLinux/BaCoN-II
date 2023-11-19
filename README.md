@@ -81,7 +81,7 @@ The noise parameters are:
 When changing the total number of classes (equivalent to the number of folders in the training data) then the batch size has to be adapted accordingly. The new class names have to be added to the c1 parameter that is set in the subprocess call at the end of the train-parameters.py file.
 
 The name of the model is automatically generated from the training parameters in ```train-parameters.py``` as 
-<pre> curves_<i>&lt;train_name&gt;</i>_<i>&lt;test_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
+<pre> curves_<i>&lt;train_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_planck-<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>_batchsize<i>&lt;batch_size&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_rescale<i>&lt;rescale_curves&gt;</i>_GPU_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
 </pre>
 
 
