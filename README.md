@@ -89,7 +89,7 @@ The name of the model is automatically generated from the training parameters in
 
 
 
-## testing
+## Testing
 
 To test a trained model with a test data set and produce a confusion matrix for the classification run the following
 
