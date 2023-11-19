@@ -81,7 +81,9 @@ The noise parameters are:
 When changing the total number of classes (equivalent to the number of folders in the training data) then the batch size has to be adapted accordingly. The new class names have to be added to the c1 parameter that is set in the subprocess call at the end of the train-parameters.py file.
 
 The name of the model is automatically generated from the training parameters in ```train-parameters.py``` as 
-<pre> curves_<i>&lt;train_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_planck-<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>_batchsize<i>&lt;batch_size&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_rescale<i>&lt;rescale_curves&gt;</i>_GPU_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
+<pre> model_<i>&lt;train_name&gt;</i>_samplePace<i>&lt;sample_pace&gt;</i>_kmax<i>&lt;k_max&gt;</i>_planck-<i>&lt;planck_fname&gt;</i>_epoch<i>&lt;n_epochs&gt;</i>
+  _batchsize<i>&lt;batch_size&gt;</i>_noiseSamples<i>&lt;n_noisy_samples&gt;</i>_wCV_noShot_wSys_rescale<i>&lt;rescale_curves&gt;</i>
+  _GPU_sigmaCurves<i>&lt;sigma_curves&gt;</i>_<i>&lt;fname_extra&gt;</i>
 </pre>
 
 
@@ -89,19 +91,18 @@ The name of the model is automatically generated from the training parameters in
 
 ## testing
 
-To test a trained model with a test data set and produce a confusion matrix for the classification run
+To test a trained model with a test data set and produce a confusion matrix for the classification run the following
 
 <pre>
-python3 test.py --log_path='models/<i>&lt;model_name&gt;</i>/<i>&lt;model_name&gt;</i>_log.txt' --TEST_DIR='<i>&lt;path/to/test-data&gt;</i>' 
+python3 test.py --log_path='models/<i>&lt;model_name&gt;</i>/<i>&lt;model_name&gt;</i>_log.txt' 
+  --TEST_DIR='<i>&lt;path/to/test-data&gt;</i>' 
   --cm_name_custom='<i>&lt;cm_name&gt;</i>-noSys'
-  --curves_folder='curve_files_sys/filters_earliest_onset' 
-  --norm_data_name='/planck_ee2.txt' 
   --add_sys='False'
 </pre>
 
 Please adapt the following options
 
-- ```--log_path``` Fill in the path for the log-file of the model to be tested. 
-- ```--cm_name_custom``` Add an (optional) addition to the name of the cm-file. (confusion matrix)
-- ```--curves_folder```Decide on whether to add a systematic error to the test spectra. Adapt the cm_name accordingly.
-- ```--add_sys``` Choose ```True``` or ```False``` to include the systematic error or leave it out. This overwrites the choice in the training of the model. For ```True``` the path to the folder with curves files (see above) has to be added.
+- ```--log_path```: Name and Path of the log-file of the model to be tested.
+- ```--TEST_DIR```: Path to the test data, e.g. ```'data/test_data'```.
+- ```--cm_name_custom```: Add an (optional) addition to the name of the cm-file (confusion matrix).
+- ```--add_sys```: Choose ```'False'``` to leave out the systematic error in testing. This overwrites the setting from the log-file of the training of the model. 
