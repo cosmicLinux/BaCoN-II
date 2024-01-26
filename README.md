@@ -6,7 +6,7 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 ## Run on Goolge Colab
 We recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
 
-Apart from the jupyter notebook the other relevant file for this workshop is the ```models.py``` file. There, we will focus on the function that sets the architecture of our CNN
+The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
 ```
 def make_custom_model(    drop=0.5, 
@@ -24,7 +24,7 @@ def make_custom_model(    drop=0.5,
                           ):
 ```
 The architecture of the CNN is shown here:
-![BaCoN architecture](BaCoN-architecture.png "BaCoN architecture")
+![BaCoN architecture](https://github.com/cosmicLinux/BaCoN-II/assets/142009018/945bc75f-3b99-40a5-9f8c-01c6de025485)
 
 
 ## BaCoN (BAyesian COsmological Network)
