@@ -4,7 +4,7 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 **The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
 ## Run on Goolge Colab
-We recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
+For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
 
 The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
