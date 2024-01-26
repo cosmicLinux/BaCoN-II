@@ -11,7 +11,7 @@ The architecture of the CNN model is set in the ```models.py``` file. It has the
 ```
 def make_custom_model(    drop=0.5, 
                           n_labels=5, 
-                          input_shape=( 100, 4), 
+                          input_shape=(100, 4), 
                           padding='valid', 
                           filters=(8, 16, 32),
                           kernel_sizes=(10,5,2),
