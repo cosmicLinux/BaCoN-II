@@ -4,14 +4,14 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 **The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
 ## Run on Goolge Colab
-For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
+For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). The training and testing of a model can be tested with the small data sets for training (100 spectra for class) and testing (10 or 1k spectra per class) that are included in the data folder in this repository. This can be used to check that the code is running. For the training of full models we recommend to use the full training data available here (with 20,000 spectra per class).
 
 The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
 ```
 def make_custom_model(    drop=0.5, 
                           n_labels=5, 
-                          input_shape=( 100, 4), 
+                          input_shape=(100, 4), 
                           padding='valid', 
                           filters=(8, 16, 32),
                           kernel_sizes=(10,5,2),
@@ -24,12 +24,14 @@ def make_custom_model(    drop=0.5,
                           ):
 ```
 The architecture of the CNN is shown here:
-![BaCoN architecture](https://github.com/cosmicLinux/BaCoN-II/assets/142009018/945bc75f-3b99-40a5-9f8c-01c6de025485)
 
-
+<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/945bc75f-3b99-40a5-9f8c-01c6de025485"
+     alt = "BaCoN architecture"
+     width="700" />
+     
 ## BaCoN (BAyesian COsmological Network)
 
-BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify dark matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
+BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
 The code now supports the following theories:  **LCDM, wCDM, f(R), DGP, and a randomly generated class** (see the reference for details).
 
 **We also provide a jupyter notebook that allows to train a model and test the classification on a test data set or on a single spectrum.**
@@ -106,8 +108,10 @@ The amplitude of the curves can be rescaled with a uniform distribution to obtai
 
 The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
+
+
 ## Data structure
-Get the spectra from [Ben's Google drive folder](https://drive.google.com/drive/folders/1MCYvhlsIsBoSNJEBGuofieieQ_VfPPJk) and put them into the data folder. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
+Get the spectra from here and put them into the data folder. The random spectra included in the data folders here are the updated random class from the second paper. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
 
 ```bash
 data/train_data/
