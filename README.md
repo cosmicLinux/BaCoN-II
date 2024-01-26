@@ -4,7 +4,7 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 **The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
 ## Run on Goolge Colab
-For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
+For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). The training and testing of a model can be tested with the small data sets for training (100 spectra for class) and testing (10 or 1k spectra per class) that are included in the data folder in this repository. This can be used to check that the code is running. For the training of full models we recommend to use the full training data available here (with 20,000 spectra per class).
 
 The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
@@ -29,7 +29,7 @@ The architecture of the CNN is shown here:
 
 ## BaCoN (BAyesian COsmological Network)
 
-BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify dark matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
+BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
 The code now supports the following theories:  **LCDM, wCDM, f(R), DGP, and a randomly generated class** (see the reference for details).
 
 **We also provide a jupyter notebook that allows to train a model and test the classification on a test data set or on a single spectrum.**
