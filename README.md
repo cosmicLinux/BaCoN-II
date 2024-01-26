@@ -24,9 +24,11 @@ def make_custom_model(    drop=0.5,
                           ):
 ```
 The architecture of the CNN is shown here:
-![BaCoN architecture](https://github.com/cosmicLinux/BaCoN-II/assets/142009018/945bc75f-3b99-40a5-9f8c-01c6de025485)
 
-
+<img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/945bc75f-3b99-40a5-9f8c-01c6de025485"
+     alt = "BaCoN architecture"
+     width="700" />
+     
 ## BaCoN (BAyesian COsmological Network)
 
 BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
