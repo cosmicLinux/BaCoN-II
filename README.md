@@ -108,8 +108,10 @@ The amplitude of the curves can be rescaled with a uniform distribution to obtai
 
 The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
 
+
+
 ## Data structure
-Get the spectra from here and put them into the data folder. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
+Get the spectra from here and put them into the data folder. The random spectra included in the data folders here are the updated random class from the second paper. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
 
 ```bash
 data/train_data/
