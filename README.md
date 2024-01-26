@@ -3,6 +3,89 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 
 **The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
+## Run on Goolge Colab
+We recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). 
+
+Apart from the jupyter notebook the other relevant file for this workshop is the ```models.py``` file. There, we will focus on the function that sets the architecture of our CNN
+
+```
+def make_custom_model(    drop=0.5, 
+                          n_labels=5, 
+                          input_shape=( 100, 4), 
+                          padding='valid', 
+                          filters=(8, 16, 32),
+                          kernel_sizes=(10,5,2),
+                          strides=(2,2,1),
+                          pool_sizes=(2, 2, 0),
+                          strides_pooling=(2, 1, 0),
+                          activation=tf.nn.leaky_relu,
+                          bayesian=True, 
+                          n_dense=1, swap_axes=True, BatchNorm=True
+                          ):
+```
+The architecture of the CNN is shown here:
+![BaCoN architecture](BaCoN-architecture.png "BaCoN architecture")
+
+
+## BaCoN (BAyesian COsmological Network)
+
+BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify dark matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
+The code now supports the following theories:  **LCDM, wCDM, f(R), DGP, and a randomly generated class** (see the reference for details).
+
+**We also provide a jupyter notebook that allows to train a model and test the classification on a test data set or on a single spectrum.**
+
+The first release of BaCoN was accompagnied by the paper [Seeking New Physics in Cosmology with Bayesian Neural Networks I: Dark Energy and Modified Gravity](https://arxiv.org/abs/2012.03992). 
+
+Bibtex:
+
+```
+@misc{mancarella2020seeking,
+      title={Seeking New Physics in Cosmology with Bayesian Neural Networks I: Dark Energy and Modified Gravity}, 
+      author={Michele Mancarella and Joe Kennedy and Benjamin Bose and Lucas Lombriser},
+      year={2020},
+      eprint={2012.03992},
+      archivePrefix={arXiv},
+      primaryClass={astro-ph.CO}
+}
+```
+
+The training and testing data was generated  by [Ben Bose](https://github.com/nebblu) with [ReACT](https://github.com/nebblu/ReACT).
+We use synthetic data of matter power spectra inluding the physical effects of massive neutrinos and baryonic effects. The preocess of data generation is published in [On the road to per cent accuracy – V. The non-linear power spectrum beyond ΛCDM with massive neutrinos and baryonic feedback](https://academic.oup.com/mnras/article/508/2/2479/6374568)
+
+Bibtex:
+
+```
+@article{bose2021road,
+  title={On the road to per cent accuracy--V. The non-linear power spectrum beyond $\Lambda$CDM with massive neutrinos and baryonic feedback},
+  author={Bose, Benjamin and Wright, Bill S and Cataneo, Matteo and Pourtsidou, Alkistis and Giocoli, Carlo and Lombriser, Lucas and McCarthy, Ian G and Baldi, Marco and Pfeifer, Simon and Xia, Qianli},
+  journal={Monthly Notices of the Royal Astronomical Society},
+  volume={508},
+  number={2},
+  pages={2479--2491},
+  year={2021},
+  publisher={Oxford University Press}
+}
+```
+
+## Overview and code organisation
+
+
+The package provides the following modules:
+
+* ```data generator.py```: data generator that generates batches of data. Data are dark matter power spectra normalised to the Planck LCDM cosmology, in the redshift bins (0.1,0.478,0.783,1.5) and k in the range 0.01-2.5 h Mpc^-1.
+* ```models.py``` : contains models' architecture
+* ```train.py```: module to train and fine-tune models. Checkpoints are automatically saved each time the validation loss decreases. Both bayesian and "traditional" NNs are available.
+* ```test.py```: evaluates the accuracy and the confusion matrix.
+
+A jupyter notebook to classify power spectra with pre-trained weights and computing the confidence in classification is available in ```notebooks/```. 
+
+The first base model is a five-label classifier with LCDM, wCDM, f(R), DGP, and "random" as classes, while the second is a two-label classifier with classes LCDM and non-LCDM.
+
+Details on training, data preparation, variations ot the base model, and extensions are available in the dedicated sections. The Bayesian implementation uses [Tensorflow probability](https://www.tensorflow.org/probability) with [Convolutional](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/Convolution1DFlipout) and [DenseFlipout](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/DenseFlipout) methods.
+
+
+
+
 ## New noise model
 
 We have produced 1000 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/```. (With names ```1.txt``` to ```1000.txt```) The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
