@@ -90,7 +90,7 @@ Details on training, data preparation, variations ot the base model, and extensi
 
 ## New noise model
 
-We have produced 1000 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/```. (With names ```1.txt``` to ```1000.txt```) The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
+We have produced 100 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/``` (With names ```1.txt``` to ```100.txt```) The full set of 1000 error curves can be found in the data folder in futor and their number has to be adapted in the ```data generator.py``` file. The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
 Some example curves with $\sigma_\mathrm{curves} = 0.10$ are shown below.
 
 <img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/7ecece0e-876d-4e15-baf7-2128f5e7db65"
