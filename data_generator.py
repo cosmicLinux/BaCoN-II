@@ -405,7 +405,7 @@ class DataGenerator(tf.compat.v2.keras.utils.Sequence): # need to add new variab
                     P_noisy = P_noisy + noise_cosVar
 
                   if self.add_sys:
-                    curve_random_nr = random.randint(1,1000)
+                    curve_random_nr = random.randint(1,100)
                     curve_file = os.path.join(self.curves_folder, '{}.txt'.format(curve_random_nr))
                     curves_loaded = np.loadtxt(curve_file)
                     noise_sys, k_sys = curves_loaded[:, 1:], curves_loaded[:, 0]
