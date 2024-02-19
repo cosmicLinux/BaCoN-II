@@ -1,10 +1,11 @@
-# BaCoN-II
-This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved noise model for the theoretical error. We're now using a variety of smooth curves that approximate the error in the theoretical modelling on smaller scales. 
+# BaCoN (BAyesian COsmological Network) II 
 
-**The training of a model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
+This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an improved model for the theoretical/systematic error. We're now using a variety of smooth curves that approximate the error in the theoretical modelling on smaller scales. 
+
+**The training of a full model can now take up to 4 days.** (for 20,000 training spectra with 10 noise realisations each)
 
 ## Run on Goolge Colab
-For a quick test of this code, we recommend to clone this github repo to a personal google drive and then run the jupyter notebook ```notebooks/training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). The training and testing of a model can be tested with the small data sets for training (100 spectra for class) and testing (10 or 1k spectra per class) that are included in the data folder in this repository. This can be used to check that the code is running. For the training of full models we recommend to use the full training data available here (with 20,000 spectra per class).
+For a quick test of this code, we recommend cloning this github repo to a personal google drive and then run the jupyter notebook ```training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). The training and testing of a model can be tested with the small data sets for training (100 spectra per class) and testing that are included in the data folder in this repository. This can be used to check that the code is running. For the training of larger models you can use the extensive data sets available [here](https://zenodo.org/records/10628849).
 
 The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
@@ -29,14 +30,14 @@ The architecture of the CNN is shown here:
      alt = "BaCoN architecture"
      width="700" />
      
-## BaCoN (BAyesian COsmological Network)
+## Citations
 
-BaCoN allows to train and test Bayesian Convolutional Neural Networks in order to **classify matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
+BaCoN allows you to train and test Bayesian Convolutional Neural Networks in order to **classify matter power spectra as being representative of different cosmologies**, as well as to compute the classification confidence. 
 The code now supports the following theories:  **LCDM, wCDM, f(R), DGP, and a randomly generated class** (see the reference for details).
 
 **We also provide a jupyter notebook that allows to train a model and test the classification on a test data set or on a single spectrum.**
 
-The first release of BaCoN was accompagnied by the paper [Seeking New Physics in Cosmology with Bayesian Neural Networks I: Dark Energy and Modified Gravity](https://arxiv.org/abs/2012.03992). 
+The first release of BaCoN was accompanied by the paper [Seeking New Physics in Cosmology with Bayesian Neural Networks I: Dark Energy and Modified Gravity](https://arxiv.org/abs/2012.03992). 
 
 Bibtex:
 
@@ -51,21 +52,24 @@ Bibtex:
 }
 ```
 
-The training and testing data was generated  by [Ben Bose](https://github.com/nebblu) with [ReACT](https://github.com/nebblu/ReACT).
-We use synthetic data of matter power spectra inluding the physical effects of massive neutrinos and baryonic effects. The preocess of data generation is published in [On the road to per cent accuracy – V. The non-linear power spectrum beyond ΛCDM with massive neutrinos and baryonic feedback](https://academic.oup.com/mnras/article/508/2/2479/6374568)
+The training and testing data was generated  by [Ben Bose](https://github.com/nebblu) with [ReACT](https://github.com/nebblu/ACTio-ReACTio).
+We use synthetic data of matter power spectra including the physical effects of massive neutrinos and baryonic effects. The power spectrum model used for the data generation is published in [On the road to per cent accuracy – V. The non-linear power spectrum beyond ΛCDM with massive neutrinos and baryonic feedback](https://academic.oup.com/mnras/article/508/2/2479/6374568)
 
 Bibtex:
 
 ```
-@article{bose2021road,
-  title={On the road to per cent accuracy--V. The non-linear power spectrum beyond $\Lambda$CDM with massive neutrinos and baryonic feedback},
-  author={Bose, Benjamin and Wright, Bill S and Cataneo, Matteo and Pourtsidou, Alkistis and Giocoli, Carlo and Lombriser, Lucas and McCarthy, Ian G and Baldi, Marco and Pfeifer, Simon and Xia, Qianli},
-  journal={Monthly Notices of the Royal Astronomical Society},
-  volume={508},
-  number={2},
-  pages={2479--2491},
-  year={2021},
-  publisher={Oxford University Press}
+@article{Bose:2021mkz,
+    author = "Bose, Benjamin and Wright, Bill S. and Cataneo, Matteo and Pourtsidou, Alkistis and Giocoli, Carlo and Lombriser, Lucas and McCarthy, Ian G. and Baldi, Marco and Pfeifer, Simon and Xia., Qianli",
+    title = "{On the road to per cent accuracy \textendash{} V. The non-linear power spectrum beyond \ensuremath{\Lambda}CDM with massive neutrinos and baryonic feedback}",
+    eprint = "2105.12114",
+    archivePrefix = "arXiv",
+    primaryClass = "astro-ph.CO",
+    doi = "10.1093/mnras/stab2731",
+    journal = "Mon. Not. Roy. Astron. Soc.",
+    volume = "508",
+    number = "2",
+    pages = "2479--2491",
+    year = "2021"
 }
 ```
 
@@ -79,18 +83,19 @@ The package provides the following modules:
 * ```train.py```: module to train and fine-tune models. Checkpoints are automatically saved each time the validation loss decreases. Both bayesian and "traditional" NNs are available.
 * ```test.py```: evaluates the accuracy and the confusion matrix.
 
-A jupyter notebook to classify power spectra with pre-trained weights and computing the confidence in classification is available in ```notebooks/```. 
+A jupyter notebook, ```training_colab.ipynb```,  to classify power spectra with pre-trained weights and computing the confidence in classification is also available. 
 
 The first base model is a five-label classifier with LCDM, wCDM, f(R), DGP, and "random" as classes, while the second is a two-label classifier with classes LCDM and non-LCDM.
 
-Details on training, data preparation, variations ot the base model, and extensions are available in the dedicated sections. The Bayesian implementation uses [Tensorflow probability](https://www.tensorflow.org/probability) with [Convolutional](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/Convolution1DFlipout) and [DenseFlipout](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/DenseFlipout) methods.
+Details on training, data preparation, variations to the base model, and extensions are available in the dedicated sections. The Bayesian implementation uses [Tensorflow probability](https://www.tensorflow.org/probability) with [Convolutional](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/Convolution1DFlipout) and [DenseFlipout](https://www.tensorflow.org/probability/api_docs/python/tfp/layers/DenseFlipout) methods.
 
 
 
 
 ## New noise model
 
-We have produced 100 curves with random fluctations that are saved in the folder ```/data/theory_error/filters_earliest_onset/``` (With names ```1.txt``` to ```100.txt```) The full set of 1000 error curves can be found in the data folder in futor and their number has to be adapted in the ```data generator.py``` file. The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
+We have produced 100 curves with random fluctuations that are saved in the folder ```/data/curve_files_sys/theory_error/filters_earliest_onset/``` (With names ```1.txt``` to ```100.txt```) The full set of 1000 error curves can be found in the data folder in the [full data set](https://zenodo.org/records/10628849)
+ and their number has to be adapted in the ```data generator.py``` file. The theory error curves become relevant from about $k = 0.03 \ \mathrm{h/Mpc}$ and have different shapes. They are scaled to a peak amplitude that can be set with the ```sigma_curves```-parameter in the ```train-parameters.py``` file. We recommend $\sigma_\mathrm{curves} = 0.05$ for EE2 data with $k_\mathrm{max} = 2.5 \ \mathrm{h/Mpc}$. 
 Some example curves with $\sigma_\mathrm{curves} = 0.10$ are shown below.
 
 <img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/7ecece0e-876d-4e15-baf7-2128f5e7db65"
@@ -106,12 +111,12 @@ The amplitude of the curves can be rescaled with a uniform distribution to obtai
 <img src="https://github.com/cosmicLinux/BaCoN-II/assets/142009018/a89b264c-d848-4ac6-805d-e5ad050c6c8c"
      width="300" />
 
-The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also a Gaussian noise, though we recommend to leave it out.
+The Cosmic Variance is still modelled as Gaussian noise on large scales. Shot noise is also optional, though we leave it out by default as the spectra are of dark matter. 
 
 
 
 ## Data structure
-Get the spectra from here and put them into the data folder. The random spectra included in the data folders here are the updated random class from the second paper. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
+Get the spectra from [here](https://zenodo.org/records/10628849) and put them into the data folder. The random spectra included in the data folders here are the updated random class from the second paper. Copy the normalisation file ```planck_ee2.txt``` from the ```data/normalisation/``` folder into the train and test data folders. The resulting data structure should look like this:
 
 ```bash
 data/train_data/
