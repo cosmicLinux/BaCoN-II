@@ -10,9 +10,9 @@ c_0 ['lcdm']
 c_1 ['dgp', 'fR', 'rand', 'wcdm']
 dataset_balanced False
 include_last False
-log_path models/filters_EE2_train20k_newRANDee_samplePace4_kmax2o5_planck-ee2_epoch50_batchsize12500_noiseSamples10_wCV_noShot_wSys_rescaleuniform_scaledNorm0o05_filtersEARLIEST-uni-newRand_log.txt
+log_path models/EE2_train20k_baseline/EE2_train20k_baseline_log.txt
 restore False
-fname filters_EE2_train20k_newRANDee_samplePace4_kmax2o5_planck-ee2_epoch50_batchsize12500_noiseSamples10_wCV_noShot_wSys_rescaleuniform_scaledNorm0o05_filtersEARLIEST-uni-newRand
+fname EE2_train20k_baseline
 model_name custom
 my_path None
 DIR data/B2_20k/ee2/ee2_obstd_0p016/nu_wb/train
