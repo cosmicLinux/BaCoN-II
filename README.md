@@ -7,6 +7,12 @@ This is the new version of [BaCoN](https://github.com/Mik3M4n/BaCoN) with an imp
 ## Run on Goolge Colab
 For a quick test of this code, we recommend cloning this github repo to a personal google drive and then run the jupyter notebook ```training_colab.ipynb``` in google colab. (Use GPU runtime. For that go to the arrow at the upper right corner and then select 'Change runtime type' -> GPU). The training and testing of a model can be tested with the small data sets for training (100 spectra per class) and testing that are included in the data folder in this repository. This can be used to check that the code is running. For the training of larger models you can use the extensive data sets available [here](https://zenodo.org/records/10628849).
 
+BaCoN was constructed with the tensorflow version 2.10. In case there are compatibility issues we recommend downgrading to this version by running
+```
+%pip install tensorflow==2.10
+%pip install tensorflow-probability==0.18
+```
+
 The architecture of the CNN model is set in the ```models.py``` file. It has the following parameters
 
 ```
