@@ -290,14 +290,23 @@ def evaluate_accuracy_bayes(model, test_generator, out_path, cm_name_custom, num
 
     #### CONFUSION MATRIX
     from sklearn.metrics import confusion_matrix
-    cm = confusion_matrix(tf.concat(y_true_tot,axis=0),tf.concat(y_pred_tot,axis=0))
 
-    if tf.unique(tf.concat(y_pred_tot,axis=0)).y.shape[0]>len(names):
-        print('Adding Not classified label')
-        names = names+['N. C.']
+    y_true = tf.concat(y_true_tot, axis=0).numpy()
+    y_pred = tf.concat(y_pred_tot, axis=0).numpy()
 
-    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc, tot_acc_no_uncl,FLAGS)
+    # your "not classified" sentinel is 99
+    has_nc = np.any(y_pred == 99)
 
+    if has_nc:
+        print("Adding Not classified label")
+        labels = list(range(len(names))) + [99]   # [0,1,2,99]
+        names = names + ['N. C.']
+    else:
+        labels = list(range(len(names)))          # [0,1,2]
+
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
+
+    _ = print_cm(cm, names, out_path, cm_name_custom, tot_acc, tot_acc_no_uncl, FLAGS)
 
     return tot_acc
 
